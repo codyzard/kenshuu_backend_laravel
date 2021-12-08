@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+  # Application
+  app:
+    container_name: app
+    build:
+      context: ./docker/php/
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www/
+  # Web server
+  nginx:
+    container_name: nginx_server
+    build:
+      context: ./docker/nginx/
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./src/public:/var/www/public
+    ports:
+      - 8000:80
+    restart: always
+  # Database
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_USER: ${DATABASE_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+    ports:
+      - "9906:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    restart: always
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
