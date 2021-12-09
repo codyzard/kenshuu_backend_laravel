@@ -4,6 +4,8 @@ services:
   # Application
   app:
     container_name: app
+    env_file:
+      - ./src/.env
     build:
       context: ./docker/php/
       dockerfile: Dockerfile
