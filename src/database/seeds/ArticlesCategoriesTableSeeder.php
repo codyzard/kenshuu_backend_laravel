@@ -41,5 +41,20 @@ class ArticlesCategoriesTableSeeder extends Seeder
             'article_id' => '2',
             'category_id' => '6',
         ]);
+
+        ArticleCategory::create([
+            'article_id' => '3',
+            'category_id' => '7',
+        ]);
+
+        ArticleCategory::create([
+            'article_id' => '3',
+            'category_id' => '8',
+        ]);
+
+        ArticleCategory::create([
+            'article_id' => '3',
+            'category_id' => '9',
+        ]);
     }
 }
