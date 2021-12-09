@@ -189,21 +189,22 @@
                 <ul class="articles">
                     <?php foreach ($articles as $article) : ?>
                     <li class="articles__item">
-                        <a href="/article/show/<?php Helper::print_filtered($article['id']); ?>" class="articles__link">
+                        <a href="#" class="articles__link">
                             <div class="articles__cover">
-                                <img src="./public/assets/image/articles/<?php Helper::print_filtered($article['thumbnail_id'] ? $article['src'] : 'text-only.png'); ?>" alt="article-image" />
+                                <img src="{{ asset('assets/image/articles/' .( $article->thumbnail_id ? $article->src : 'text-only.png')) }}"
+                                    alt="article-image" />
                             </div>
                             <p class="articles__content">
-                                <?php Helper::print_filtered($article['title']); ?>
+                                {{ $article->title }}
                             </p>
                         </a>
                         <div class="articles__stamp">
                             <p class="articles__time">
-                                <img src="./public/assets/image/icon.png" class="clock-icon clock-icon--small"
+                                <img src="{{ asset('assets/image/icon.png') }}" class="clock-icon clock-icon--small"
                                     alt="time-stamp" />
-                                <?php Helper::print_filtered($article['created_at']); ?>
+                                {{ $article->created_at }}
                             </p>
-                            <a href="#" class="articles__company-release"><?php Helper::print_filtered($article['fullname']); ?></a>
+                            <a href="#" class="articles__company-release">{{ $article->fullname }}</a>
                         </div>
                     </li>
                     <?php endforeach ?>

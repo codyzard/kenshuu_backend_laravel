@@ -18,7 +18,7 @@ class ImagesTableSeeder extends Seeder
         ]);
 
         Image::create([
-            'src' => 'article-2.png]',
+            'src' => 'article-2.png',
             'article_id' => 2,
         ]);
 

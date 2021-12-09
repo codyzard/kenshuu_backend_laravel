@@ -11,8 +11,8 @@ class HomeController extends Controller
     public function home()
     {
         $categories = Category::all();
-        $articles = Article::all();
-        return view('homes.home',[
+        $articles = Article::get_all_articles();
+        return view('homes.home', [
             'categories' => $categories,
             'articles' => $articles,
         ]);

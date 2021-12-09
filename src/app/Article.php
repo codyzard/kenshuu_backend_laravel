@@ -35,4 +35,21 @@ class Article extends Model
     {
         return $this->belongsToMany('App\Category', 'article_categories', 'article_id', 'category_id');
     }
+
+    /**
+     * get_all_articles
+     *
+     * @return array
+     */
+    public static function get_all_articles()
+    {
+        return Article::select(
+            'articles.id',
+            'title',
+            'thumbnail_id',
+            'articles.created_at',
+            'src',
+            'authors.fullname'
+        )->leftJoin('images', 'images.id', '=', 'articles.thumbnail_id')->join('authors', 'authors.id', '=', 'articles.author_id')->get();
+    }
 }
