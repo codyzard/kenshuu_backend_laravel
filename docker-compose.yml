@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.9"
 
 services:
   # Application
@@ -12,6 +12,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./src:/var/www/
+    restart: always
   # Web server
   nginx:
     container_name: nginx_server
@@ -30,9 +31,9 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_USER: ${DATABASE_USERNAME}
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_ROOT_USER: ${DB_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
     ports:
       - "9906:3306"
   phpmyadmin:

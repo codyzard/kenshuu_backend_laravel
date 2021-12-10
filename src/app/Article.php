@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Article extends Model
 {
@@ -41,7 +42,7 @@ class Article extends Model
      *
      * @return array
      */
-    public static function get_all_articles()
+    public function get_all_articles()
     {
         return Article::select(
             'articles.id',
@@ -50,6 +51,16 @@ class Article extends Model
             'articles.created_at',
             'src',
             'authors.fullname'
-        )->leftJoin('images', 'images.id', '=', 'articles.thumbnail_id')->join('authors', 'authors.id', '=', 'articles.author_id')->get();
+        )->leftJoin('images', 'images.id', '=', 'articles.thumbnail_id')->join('authors', 'authors.id', '=', 'articles.author_id')->orderBy('created_at', Config::get("gVar.sort_desc"))->get();
+    }
+
+    public function get_article_by_id($id)
+    {
+        $article = Article::find($id)->load('author:id,fullname')->load('images');
+        $article->page_view += 1;
+        if ($article->save()) {
+            return $article;
+        }
+        return false;
     }
 }

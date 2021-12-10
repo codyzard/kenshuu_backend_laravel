@@ -20,4 +20,9 @@ class Category extends Model
     {
         return $this->belongsToMany('App\Article', 'article_categories', 'category_id', 'article_id');
     }
+
+    public function get_all_categories()
+    {
+        return Category::all();
+    }
 }

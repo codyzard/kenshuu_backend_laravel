@@ -11,4 +11,10 @@
 |
 */
 
-Route::get('/', 'HomeController@home');
+// Home
+Route::get('/', 'HomeController@home')->name('homes.home');
+
+// Article
+Route::get('/articles/new', 'ArticleController@new')->name('articles.new');
+Route::post('/articles/create', 'ArticleController@create')->name('articles.create');
+Route::get('/articles/{article}', 'ArticleController@show')->name('articles.show');
