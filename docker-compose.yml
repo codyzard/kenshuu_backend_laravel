@@ -4,8 +4,6 @@ services:
   # Application
   app:
     container_name: app
-    env_file:
-      - ./src/.env
     build:
       context: ./docker/php/
       dockerfile: Dockerfile
@@ -34,9 +32,12 @@ services:
       MYSQL_ROOT_USER: ${DB_USERNAME}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
+    volumes:
+      - ./docker/db:/docker-entrypoint-initdb.d
     ports:
       - "9906:3306"
   phpmyadmin:
+    container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin
     ports:
       - "8080:80"
