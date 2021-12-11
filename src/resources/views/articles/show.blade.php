@@ -27,7 +27,7 @@
                 </div>
                 <?php endforeach ?>
                 <?php endif ?>
-                <p class="article__content">{{ $article->content }}></p>
+                <p class="article__content">{{ $article->content }}</p>
             </div>
         </div>
         <div class="control">

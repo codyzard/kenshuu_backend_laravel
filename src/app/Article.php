@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Config;
 
 class Article extends Model
 {
+    protected $fillable = [
+        'title',
+        'thumbnail_id',
+        'content',
+        'author_id',
+    ];
     /**
      * article belongs to author
      *
@@ -34,7 +40,7 @@ class Article extends Model
      */
     public function categories()
     {
-        return $this->belongsToMany('App\Category', 'article_categories', 'article_id', 'category_id');
+        return $this->belongsToMany('App\Category', 'article_categories', 'article_id', 'category_id')->withTimestamps();
     }
 
     /**
@@ -62,5 +68,18 @@ class Article extends Model
             return $article;
         }
         return false;
+    }
+
+    public function store_new_article($title, $images, $thumbnail, $content, $categories_id, $author_id)
+    {
+        $article = new Article();
+        $article->title = $title;
+        $article->content = $content;
+        $article->author_id = $author_id;
+        if ($images && $thumbnail) {
+        }
+        $article->save();
+        // $article->categories()->attach($categories_id); save roi moi dc add
+        return $article;
     }
 }

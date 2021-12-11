@@ -3,6 +3,11 @@
 @section('content')
     <div class="post-article">
         <h1 class="post-article__heading">投稿</h1>
+        @if (Session::has('message'))
+            <div class="flash flash--success">
+                <p class="message">{{ Session::get('message') }}</p>
+            </div>
+        @endif
         @if ($errors->any())
             <div class="flash flash--danger">
                 @foreach ($errors->all() as $error)
