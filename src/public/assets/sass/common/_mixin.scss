@@ -1,0 +1,31 @@
+@mixin flex_horizontal_center {
+  display: flex;
+  justify-content: center;
+}
+@mixin flex_vertical_center {
+  display: flex;
+  align-items: center;
+}
+@mixin flex_horizontal_spacebetween {
+  display: flex;
+  justify-content: space-between;
+}
+
+@mixin flex_vertical_spacebetween {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@mixin flex_horizontal_vertical_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin articles_content_wrap {
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+}

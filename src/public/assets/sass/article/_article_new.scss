@@ -1,0 +1,60 @@
+@import "./../common/variable";
+@import "./../common/global-modify";
+input,
+textarea,
+label,
+button,
+select,
+option {
+  font-size: 1.4rem;
+}
+
+.post-article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+  &__heading {
+    font-size: 2.4rem;
+  }
+}
+.form {
+  margin: 25px 0;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  background-color: beige;
+  gap: 20px;
+  button {
+    margin: 0 auto;
+  }
+}
+
+.form-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  label {
+    width: 20%;
+  }
+  select {
+    width: 100%;
+  }
+}
+
+.images-choosen {
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.input-error {
+  background-color: beige;
+  .error-line {
+    color: red;
+    padding: 10px;
+    font-size: 1.2rem;
+  }
+}
