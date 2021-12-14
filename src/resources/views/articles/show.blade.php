@@ -2,14 +2,11 @@
 
 @section('content')
     <div class="wrap-article">
-        <?php if (!empty($_SESSION['messages'])) : ?>
-        <div class="flash flash--success">
-            <?php foreach ($_SESSION['messages'] as $mess) : ?>
-            <p class="message"><?php Helper::print_filtered($mess); ?></p>
-            <?php endforeach ?>
-            <?php unset($_SESSION['messages']); ?>
-        </div>
-        <?php endif ?>
+        @if (Session::has('message'))
+            <div class="flash flash--success">
+                <p class="message">{{ Session::get('message') }}</p>
+            </div>
+        @endif
         <div class="article">
             <div class="article-header">
                 <h3 class="article__title">{{ $article->title }}</h3>
@@ -31,7 +28,7 @@
             </div>
         </div>
         <div class="control">
-            <a class="btn btn--warning btn--radius" href="#">変更</a>
+            <a class="btn btn--warning btn--radius" href="{{ route('articles.edit', $article->id) }}">変更</a>
             <a class="btn btn--danger btn--radius" onclick="return confirm('Are you sure?')" href="#">削除</a>
         </div>
     </div>

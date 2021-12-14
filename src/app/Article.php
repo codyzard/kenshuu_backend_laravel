@@ -127,4 +127,17 @@ class Article extends Model
             echo 'Error: ' . $e->getMessage();
         }
     }
+
+    public function get_article_for_edit($id)
+    {
+        return Article::find($id, ['id', 'title', 'content']);
+    }
+
+    public function update_article($id, $title, $content)
+    {
+        return Article::find($id)->update([
+            'title' => $title,
+            'content' => $content,
+        ]);
+    }
 }

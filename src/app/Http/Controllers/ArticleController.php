@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use App\Category;
-use App\Helper\Helper;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -15,6 +14,12 @@ class ArticleController extends Controller
         $this->articleModel = new Article();
         $this->categoryModel = new Category();
     }
+    /**
+     * Showing article with $id
+     *
+     * @param  mixed $id
+     * @return view
+     */
     public function show($id)
     {
         $article = $this->articleModel->get_article_by_id($id);
@@ -26,6 +31,11 @@ class ArticleController extends Controller
         return redirect('/');
     }
 
+    /**
+     * Showing new article form
+     *
+     * @return view
+     */
     public function new()
     {
         $categories = $this->categoryModel->get_all_categories();
@@ -34,6 +44,12 @@ class ArticleController extends Controller
         ]);
     }
 
+    /**
+     * Creating new article
+     *
+     * @param  mixed $request(title, content, categories, images(or not), thumbnail(or not))
+     * @return void
+     */
     public function create(Request $request)
     {
         $validatedData = $this->validate($request, [
@@ -61,6 +77,47 @@ class ArticleController extends Controller
                 return redirect()->back()->with('message', '記事投稿が成功でした！');
             }
             return redirect('/');
+        }
+    }
+
+    /**
+     * Showing edit article form with $id
+     *
+     * @param  mixed $id
+     * @return view
+     */
+    public function edit($id)
+    {
+        $article_edit = $this->articleModel->get_article_for_edit($id);
+        return view('articles.edit', [
+            'article_edit' => $article_edit,
+        ]);
+    }
+
+    /**
+     * Updating article with title & content
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
+     */
+    public function update(Request $request, $id)
+    {
+        $validatedData = $this->validate($request, [
+            'title' => 'required',
+            'content' => 'required',
+        ], [
+            'title.required' => 'タイトルが空自にすることはできません！',
+            'content.required' => 'コンテンツが空自にすることはできません！',
+        ]);
+        if ($validatedData) {
+            $title = $request->title;
+            $content = $request->content;
+            $is_success = $this->articleModel->update_article($id, $title, $content);
+            if ($is_success) {
+                return redirect()->route('articles.show', $id)->with('message', '記事編集が成功でした！');
+            }
+            return redirect()->route('articles.edit', $id);
         }
     }
 }

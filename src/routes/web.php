@@ -15,6 +15,8 @@
 Route::get('/', 'HomeController@home')->name('homes.home');
 
 // Article
+Route::get('/articles/{id}', 'ArticleController@show')->name('articles.show');
 Route::get('/articles/new', 'ArticleController@new')->name('articles.new');
 Route::post('/articles/create', 'ArticleController@create')->name('articles.create');
-Route::get('/articles/{article}', 'ArticleController@show')->name('articles.show');
+Route::get('/articles/{id}/edit', 'ArticleController@edit')->name("articles.edit");
+Route::patch('/articles/{id}', 'ArticleController@update')->name("articles.update");
