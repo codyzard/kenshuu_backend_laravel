@@ -3,7 +3,6 @@
 namespace App\Helper;
 
 use Exception;
-use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 class Helper

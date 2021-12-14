@@ -105,7 +105,7 @@ class Article extends Model
                 // save image if images exist
                 if ($images && $thumbnail) {
                     foreach ($images as $img) {
-                        $location = public_path() . self::PUBLIC_IMAGE_ARTICLE_PATH;
+                        $location = public_path(self::PUBLIC_IMAGE_ARTICLE_PATH);
                         $image_name = Helper::store_image($img, $location);
                         $filename[] = $image_name;
                         $img_db_obj = $article->images()->create(['src' => $image_name]); //attach images
@@ -128,16 +128,62 @@ class Article extends Model
         }
     }
 
+    /**
+     * Getting article's title, content by $id for edit
+     *
+     * @param  int $id
+     * @return $article
+     */
     public function get_article_for_edit($id)
     {
         return Article::find($id, ['id', 'title', 'content']);
     }
 
+    /**
+     * Updating article's title & content by $id
+     *
+     * @param  int $id
+     * @param  string $title
+     * @param  string $content
+     * @return bool
+     */
     public function update_article($id, $title, $content)
     {
         return Article::find($id)->update([
             'title' => $title,
             'content' => $content,
         ]);
+    }
+
+    /**
+     * Deleting aricle by $id
+     *
+     * @param  int $id
+     * @return bool
+     */
+    public function delete_article($id)
+    {
+        DB::beginTransaction();
+        try {
+            $article_delete = Article::find($id);
+            $images_path = $article_delete->images()->pluck('src')->toArray();
+            if ($article_delete->delete()) {
+                if (!empty($images_path)) {
+                    if (Helper::remove_image_from_storage($images_path, public_path(self::PUBLIC_IMAGE_ARTICLE_PATH))) {
+                        DB::commit();
+                        return true;
+                    } else {
+                        DB::rollBack();
+                        return false;
+                    }
+                }
+                DB::commit();
+                return true;
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            echo 'Error: ' . $e->getMessage();
+            return false;
+        }
     }
 }

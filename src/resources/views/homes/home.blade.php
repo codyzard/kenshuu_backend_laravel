@@ -173,19 +173,18 @@
                 <a class="btn btn--info btn--radius" href="{{ route('articles.new') }}">投稿</a>
             </div>
             <div class="wrap">
-                <?php if (!empty($_SESSION['messages'])) : ?>
-                <div class="flash flash--success">
-                    <?php echo Helper::flash_message($_SESSION['messages']); ?>
-                </div>
-                <?php endif ?>
-                <?php if (!empty($_SESSION['errors'])) : ?>
-                <div class="flash flash--danger">
-                    <?php foreach ($_SESSION['errors'] as $err) : ?>
-                    <p class="message"><?php Helper::print_filtered($err); ?></p>
-                    <?php endforeach ?>
-                    <?php unset($_SESSION['errors']); ?>
-                </div>
-                <?php endif ?>
+                @if (Session::has('message'))
+                    <div class="flash flash--success">
+                        <p class="message">{{ Session::get('message') }}</p>
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="flash flash--danger">
+                        @foreach ($errors->all() as $error)
+                            <p class="message">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
                 <ul class="articles">
                     <?php foreach ($articles as $article) : ?>
                     <li class="articles__item">

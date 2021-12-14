@@ -29,7 +29,12 @@
         </div>
         <div class="control">
             <a class="btn btn--warning btn--radius" href="{{ route('articles.edit', $article->id) }}">変更</a>
-            <a class="btn btn--danger btn--radius" onclick="return confirm('Are you sure?')" href="#">削除</a>
+            <form action="{{ route('articles.delete', $article->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" onclick="return confirm('Are you sure?')"><a
+                        class="btn btn--danger btn--radius">削除</a></button>
+            </form>
         </div>
     </div>
 @endsection

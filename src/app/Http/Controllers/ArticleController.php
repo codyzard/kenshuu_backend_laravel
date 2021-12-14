@@ -120,4 +120,19 @@ class ArticleController extends Controller
             return redirect()->route('articles.edit', $id);
         }
     }
+
+    /**
+     * Deleting article by $id
+     *
+     * @param  int $id
+     * @return void
+     */
+    public function delete($id)
+    {
+        $is_success = $this->articleModel->delete_article($id);
+        if ($is_success) {
+            return redirect()->route('homes.home')->with('message', '削除が成功しました！');
+        }
+        return redirect()->route('articles.show', $id)->withErrors(['delete' => '削除が失敗しました！']);
+    }
 }
