@@ -51,7 +51,7 @@ class ArticleController extends Controller
             $thumbnail = null;
             $content = $request->content;
             $categories_id = $request->categories;
-            $author_id = 1;
+            $author_id = 1; // しばらくアサインメント
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 $thumbnail = $request->thumbnail;
