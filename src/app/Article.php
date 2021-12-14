@@ -72,10 +72,12 @@ class Article extends Model
      */
     public function get_article_by_id($id)
     {
-        $article = Article::find($id)->load('author:id,fullname')->load('images');
-        $article->page_view += 1;
-        if ($article->save()) {
-            return $article;
+        $article = Article::find($id);
+        if ($article) {
+            $article->page_view += 1;
+            if ($article->save()) {
+                return $article->load('author:id,fullname')->load('images');
+            }
         }
         return false;
     }

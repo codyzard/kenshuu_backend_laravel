@@ -28,7 +28,7 @@ class ArticleController extends Controller
                 'article' => $article,
             ]);
         }
-        return redirect('/');
+        return redirect()->route('notfounds.not_found');
     }
 
     /**
@@ -89,9 +89,12 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article_edit = $this->articleModel->get_article_for_edit($id);
-        return view('articles.edit', [
-            'article_edit' => $article_edit,
-        ]);
+        if ($article_edit) {
+            return view('articles.edit', [
+                'article_edit' => $article_edit,
+            ]);
+        }
+        return redirect()->route('notfounds.not_found');
     }
 
     /**
