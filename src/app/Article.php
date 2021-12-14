@@ -99,23 +99,28 @@ class Article extends Model
             $article->title = $title;
             $article->content = $content;
             $article->author_id = $author_id;
-            $article->save();
-            // save image if images exist
-            if ($images && $thumbnail) {
-                $filename = [];
-                foreach ($images as $img) {
-                    $location = public_path() . self::PUBLIC_IMAGE_ARTICLE_PATH;
-                    $image_name = Helper::store_image($img, $location);
-                    $filename[] = $image_name;
-                    $img_db_obj = $article->images()->create(['src' => $image_name]); //attach images
-                    if ($img->getClientOriginalName() == $thumbnail) {
-                        $article->update(['thumbnail_id' => $img_db_obj->id]);
+            $filename = [];
+            $location = '';
+            if ($article->save()) {
+                // save image if images exist
+                if ($images && $thumbnail) {
+                    foreach ($images as $img) {
+                        $location = public_path() . self::PUBLIC_IMAGE_ARTICLE_PATH;
+                        $image_name = Helper::store_image($img, $location);
+                        $filename[] = $image_name;
+                        $img_db_obj = $article->images()->create(['src' => $image_name]); //attach images
+                        if ($img->getClientOriginalName() == $thumbnail) {
+                            $article->update(['thumbnail_id' => $img_db_obj->id]);
+                        }
                     }
                 }
+                $article->categories()->attach($categories_id); // attach categories
+                DB::commit();
+                return $article;
+            } else {
+                DB::rollBack();
+                return false;
             }
-            $article->categories()->attach($categories_id); // attach categories
-            DB::commit();
-            return $article;
         } catch (Exception $e) {
             Helper::remove_image_from_storage($filename, $location);
             DB::rollBack();
