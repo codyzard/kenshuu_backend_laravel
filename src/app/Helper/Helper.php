@@ -58,10 +58,10 @@ class Helper
             }
             // ファイルデータからSHA-1ハッシュを取ってファイル名を決定し，保存する
             if (!move_uploaded_file(
-                $img,
+                $img->getRealPath(),
                 $path = sprintf(
                     $location . '%s.%s',
-                    $filename = sha1_file($img), //hash & get filename for return and save database
+                    $filename = uniqid() . sha1_file($img), //hash & get filename for return and save database
                     $ext
                 )
             )) {

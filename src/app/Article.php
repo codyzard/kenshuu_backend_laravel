@@ -169,7 +169,7 @@ class Article extends Model
         try {
             $article_delete = Article::find($id);
             $images_path = $article_delete->images()->pluck('src')->toArray();
-            if ($article_delete->delete()) {
+            if ($article_delete && $article_delete->delete()) {
                 if (!empty($images_path)) {
                     if (Helper::remove_image_from_storage($images_path, public_path(self::PUBLIC_IMAGE_ARTICLE_PATH))) {
                         DB::commit();

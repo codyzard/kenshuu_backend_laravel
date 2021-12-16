@@ -120,7 +120,7 @@ class ArticleController extends Controller
             if ($is_success) {
                 return redirect()->route('articles.show', $id)->with('message', '記事編集が成功でした！');
             }
-            return redirect()->route('articles.edit', $id);
+            return redirect()->route('articles.edit', $id)->withErrors('更新が失敗しました！');
         }
     }
 
@@ -136,6 +136,6 @@ class ArticleController extends Controller
         if ($is_success) {
             return redirect()->route('homes.home')->with('message', '削除が成功しました！');
         }
-        return redirect()->route('articles.show', $id)->withErrors(['delete' => '削除が失敗しました！']);
+        return redirect()->route('articles.show', $id)->withErrors('削除が失敗しました！');
     }
 }
