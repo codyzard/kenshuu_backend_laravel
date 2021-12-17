@@ -68,4 +68,15 @@ class Author extends Authenticatable
             return false;
         }
     }
+
+    public function update_avatar($author_id, $avatar)
+    {
+        $old_avatar[] = Author::find($author_id, ['avatar'])->avatar;
+        $is_sucess = $this->insert_avatar($author_id, $avatar);
+        if ($is_sucess) {
+            Helper::remove_image_from_storage($old_avatar, public_path(self::PUBLIC_IMAGE_AUTHOR_PATH));
+            return Author::find($author_id, ['avatar']);
+        }
+        return 0;
+    }
 }

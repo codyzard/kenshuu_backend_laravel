@@ -32,7 +32,7 @@ Route::post('/authors/login_process', 'AuthorController@login_process')->name('a
 Route::post('/authors/register_process', 'AuthorController@register_process')->name('authors.register_process');
 Route::get('/authors/logout', 'AuthorController@logout')->name('authors.logout');
 Route::get('/authors/profile/{id}', 'AuthorController@profile')->name('authors.profile');
-Route::post('/authors/update_avatar', 'AuthorController@update_avatar')->name('authors.update_avatar');
+Route::post('/authors/profile/update_avatar', 'AuthorController@update_avatar')->name('authors.update_avatar');
 
 //404
 Route::get('/404-not-found', 'NotFoundController@not_found')->name('notfounds.not_found');

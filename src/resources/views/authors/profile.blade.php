@@ -18,16 +18,19 @@
             @endif
             <label for="{{ Auth::user()->id === $author->id ? 'profile-change' : '' }}"
                 class="profile__avatar {{ Auth::user()->id === $author->id ? 'change-avatar' : '' }}">
-                <img src="{{ asset('assets/image/authors/' . ($author->avatar ?: '../default-avatar.png')) }}"
+                <img src="{{ asset('assets/image/authors/' . ($author->avatar && file_exists(public_path('assets/image/authors/'.$author->avatar)) ? $author->avatar : '../default-avatar.png')) }}"
                     alt="avatar">
-                <input name="update_avatar" type="file" class="form-control" id="profile-change" hidden>
+                <form method="POST" enctype="multipart/form-data" action="javascript:void(0)" id="form-avatar">
+                    @csrf
+                    <input name="update_avatar" type="file" class="form-control" id="profile-change" hidden>
+                </form>
                 <!-- will use for change avatar by Ajax-->
                 <p class="tooltip">アバターを変更する？</p>
             </label>
             <p class="profile__name">{{ $author->fullname }}</p>
             <p class="profile__contribution">
                 <span class="profile__contribution__title">記事の数</span>
-                <span class="profile__contribution__number">{{$author->articles()->count()}}</span>
+                <span class="profile__contribution__number">{{ $author->articles()->count() }}</span>
             </p>
         </div>
         <div class="sub-profile">

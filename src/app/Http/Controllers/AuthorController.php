@@ -131,6 +131,12 @@ class AuthorController extends Controller
 
     public function update_avatar(Request $request)
     {
-
+        $author_id = $request->author_id;
+        if ($author_id && $request->hasFile('update_avatar')) {
+            $image_src = $this->authorModel->update_avatar($author_id, $request->file('update_avatar'));
+            return response()->json([
+                'image_src' => $image_src->avatar,
+            ]);
+        }
     }
 }
