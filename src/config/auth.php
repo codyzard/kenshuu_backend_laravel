@@ -13,9 +13,14 @@ return [
     |
     */
 
+    // 'defaults' => [
+    //     'guard' => 'web',
+    //     'passwords' => 'users',
+    // ],
+
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'authors',
     ],
 
     /*
@@ -36,9 +41,14 @@ return [
     */
 
     'guards' => [
+        // 'web' => [
+        //     'driver' => 'session',
+        //     'provider' => 'users',
+        // ],
+
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'authors',
         ],
 
         'api' => [
@@ -71,6 +81,10 @@ return [
             'model' => App\User::class,
         ],
 
+        'authors' => [
+            'driver' => 'eloquent',
+            'model' => App\Author::class,
+        ]
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -99,6 +113,9 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'authors' => [
+            'provider' => 'authors'
+        ]
     ],
 
     /*

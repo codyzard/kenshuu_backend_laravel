@@ -58,17 +58,18 @@ $(document).ready(function () {
     form_data.append("author_id", author_id);
     form_data.append("file", selected_avatar);
     $.ajax({
-      url: "/author/update_avatar",
+      url: "/authors/update_avatar",
       type: "POST",
       contentType: false,
       processData: false,
       data: form_data,
       success: function (data) {
-        alert("アバターの変更が成功でした！");
-        $(".profile__avatar img").attr(
-          "src",
-          "/public/assets/image/authors/" + data
-        );
+        // alert("アバターの変更が成功でした！");
+        // $(".profile__avatar img").attr(
+        //   "src",
+        //   "/public/assets/image/authors/" + data
+        // );
+        console.log(data);
       },
       error: function (err) {
         console.log(err);
