@@ -7,7 +7,9 @@ use Exception;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class Author extends Authenticatable
 {
@@ -29,6 +31,16 @@ class Author extends Authenticatable
         return $this->hasMany('App\Article');
     }
 
+    /**
+     * Creating new author
+     *
+     * @param  string $email
+     * @param  string $username
+     * @param  string $fullname
+     * @param  string $avatar
+     * @param  string $password
+     * @return bool
+     */
     public function create($email, $username, $fullname, $avatar, $password)
     {
         DB::beginTransaction();
@@ -53,6 +65,13 @@ class Author extends Authenticatable
         }
     }
 
+    /**
+     * Storing new profile's avatar
+     *
+     * @param  int $author_id
+     * @param  file $avatar
+     * @return void
+     */
     public function insert_avatar($author_id, $avatar)
     {
         try {
@@ -69,6 +88,13 @@ class Author extends Authenticatable
         }
     }
 
+    /**
+     * Updating new profile's avatar
+     *
+     * @param  int $author_id
+     * @param  file $avatar
+     * @return $author
+     */
     public function update_avatar($author_id, $avatar)
     {
         $old_avatar[] = Author::find($author_id, ['avatar'])->avatar;
@@ -77,6 +103,45 @@ class Author extends Authenticatable
             Helper::remove_image_from_storage($old_avatar, public_path(self::PUBLIC_IMAGE_AUTHOR_PATH));
             return Author::find($author_id, ['avatar']);
         }
-        return 0;
+        return false;
+    }
+
+    /**
+     * Updating new profile
+     *
+     * @param  int $id
+     * @param  string $fullname
+     * @param  string $address
+     * @param  string $birthday
+     * @param  string $phone
+     * @return bool
+     */
+    public function update_profile($id, $fullname, $address, $birthday, $phone)
+    {
+        return Author::find($id)->update([
+            'fullname' => $fullname,
+            'address' => $address,
+            'birthday' => $birthday,
+            'phone' => $phone,
+        ]);
+    }
+
+    /**
+     * Updating new password
+     *
+     * @param  string $old_password
+     * @param  string $new_password
+     * @return bool
+     */
+    public function update_password($old_password, $new_password)
+    {
+        $author = Author::where('email', Auth::user()->email)->first();
+        //check if author exists and old password matched
+        if ($author && Hash::check($old_password, $author->password)) {
+            $author->password = bcrypt($new_password);
+            $author->save();
+            return true;
+        }
+        return false;
     }
 }

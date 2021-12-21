@@ -17,12 +17,23 @@ class AuthorController extends Controller
         $this->authorModel = new Author();
     }
 
+    /**
+     * Rendering register form
+     *
+     * @return view
+     */
     public function register()
     {
         if (Auth::check()) return redirect()->route('homes.home')->withErrors('ログインしました！');
         return view('authors.register');
     }
 
+    /**
+     * Register process
+     *
+     * @param  mixed $request
+     * @return view
+     */
     public function register_process(Request $request)
     {
         $request->validate([
@@ -64,12 +75,23 @@ class AuthorController extends Controller
         return redirect()->route('authors.register')->withErrors('アカウントを登録することができませんでした！');
     }
 
+    /**
+     * Rendering login form
+     *
+     * @return void
+     */
     public function login()
     {
         if (Auth::check()) return redirect()->route('homes.home')->withErrors('ログインしました！');
         return view('authors.login');
     }
 
+    /**
+     * Login process
+     *
+     * @param  mixed $request
+     * @return view
+     */
     public function login_process(Request $request)
     {
         $request->validate([
@@ -93,7 +115,7 @@ class AuthorController extends Controller
     }
 
     /**
-     * check input is email or username
+     * Checking input is email or username
      *
      * @param  mixed $request
      * @return array
@@ -110,6 +132,11 @@ class AuthorController extends Controller
         ];
     }
 
+    /**
+     * Destroying session
+     *
+     * @return view
+     */
     public function logout()
     {
         Session::flush();
@@ -118,6 +145,12 @@ class AuthorController extends Controller
         return redirect()->route('authors.login');
     }
 
+    /**
+     * Rendering profile
+     *
+     * @param  int $id
+     * @return void
+     */
     public function profile($id)
     {
         $author = Author::find($id);
@@ -129,6 +162,12 @@ class AuthorController extends Controller
         return redirect()->route('notfounds.not_found');
     }
 
+    /**
+     * Updating profile's avatar
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function update_avatar(Request $request)
     {
         $author_id = $request->author_id;
@@ -138,5 +177,107 @@ class AuthorController extends Controller
                 'image_src' => $image_src->avatar,
             ]);
         }
+    }
+
+    /**
+     * Rendering profile's edit form
+     *
+     * @param  int $id
+     * @return void
+     */
+    public function edit_profile($id)
+    {
+        $author = Auth::user();
+        if ($author && $author->id == $id) {
+            return view('authors.update_profile', [
+                'author' => $author,
+            ]);
+        }
+        return redirect()->route('notfounds.not_found');
+    }
+
+    /**
+     * Updating profile
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
+     */
+    public function update_profile(Request $request, $id)
+    {
+        $request->validate([
+            'fullname' => 'required',
+            'address' => 'required',
+            'birthday' => 'required',
+            'phone' => 'required|min:10|max:14',
+        ], [
+            'fullname.required' => 'フルネームは空白がいけません！',
+            'address.required' => '住所は空白がいけません！',
+            'birthday.required' => '生年月日は空白がいけません！',
+            'phone.required' => '電話番号は空白がいけません！',
+            'phone.min' => '電話番号は最低10文字、最大14文字としてください！',
+            'phone.max' => '電話番号は最低10文字、最大14文字としてください！',
+        ]);
+        $fullname = $request->fullname;
+        $address = $request->address;
+        $birthday = $request->birthday;
+        $phone = $request->phone;
+        if (Author::where('phone', $phone)->count() > 0) {
+            return redirect()->route('authors.edit_profile', $id)->withErrors('電話番号は存在しました！');
+        }
+        $is_success = $this->authorModel->update_profile($id, $fullname, $address, $birthday, $phone);
+        if ($is_success) {
+            return redirect()->route('authors.profile', $id)->with('message', 'プロフィールを変更することは成功でした！');
+        }
+        return redirect()->route('authors.edit_profile', $id)->withErrors('プロフィールを変更することは失敗でした！');
+    }
+
+    /**
+     * Rendering password's edit form
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function edit_password($id)
+    {
+        $author = Auth::user();
+        if ($author && $author->id == $id) {
+            return view('authors.update_password', [
+                'author' => $author,
+            ]);
+        }
+        return redirect()->route('notfounds.not_found');
+    }
+
+    /**
+     * Updating password
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function update_password(Request $request)
+    {
+        if (Auth::user()) {
+            $request->validate([
+                'old_password' => 'required|min:6|max:100',
+                'new_password' => 'required_with:cnew_password|same:cnew_password|min:6|max:100|',
+                'cnew_password' => 'required|min:6|max:100',
+            ], [
+                'old_password.required' => 'オールドパスワードは空白がいけません！',
+                'new_password.required' => '新しいパスワードは空白がいけません！',
+                'cnew_password.required' => 'パスワード確認は空白がいけません！',
+                'new_password.same' => '新しいパスワードとパスワード確認は同じでなければなりません！',
+                'min' => 'パスワードは最低10文字、最大14文字としてください！',
+                'max' => 'パスワードは最低10文字、最大14文字としてください！',
+            ]);
+            $old_password = $request->old_password;
+            $new_password = $request->new_password;
+            $is_success = $this->authorModel->update_password($old_password, $new_password);
+            if ($is_success) {
+                return redirect()->route('authors.profile', Auth::user()->id)->with('message', 'パスワードを変更することは成功でした！');
+            }
+            return redirect()->back()->withErrors('オールドパスワードは間違いました！');
+        }
+        return redirect()->route('notfounds.not_found');
     }
 }

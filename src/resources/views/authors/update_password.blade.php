@@ -12,8 +12,9 @@
                 </div>
             @endif
             <h3>パスワード変更</h3>
-            <form action="/authentication/store_change_password/<?php Helper::print_filtered($author_id); ?>" method="POST">
+            <form action="{{ route('authors.update_password', $author->id) }}" method="POST">
                 @csrf
+                @method('PATCH')
                 <div class="form-group">
                     <input type="password" name="old_password" id="old_password" class="form-control" placeholder="古いパスワード"
                         required />

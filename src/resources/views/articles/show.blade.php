@@ -13,7 +13,7 @@
                 <div class="sub-info">
                     <time class="article__time"><img src="{{ asset('assets/image/icon.png') }}"
                             class="clock-icon clock-icon--medium" alt="time-stamp" />{{ $article->created_at }}</time>
-                    <p class="article__author">筆者: <a href="#">{{ $article->author->fullname }}</a></p>
+                    <p class="article__author">筆者: <a href="{{route('authors.profile', $article->author->id)}}">{{ $article->author->fullname }}</a></p>
                     <p class="article__view">ページビュー: {{ $article->page_view }}</p>
                 </div>
             </div>
