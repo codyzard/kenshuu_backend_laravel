@@ -95,13 +95,6 @@ class AuthorController extends Controller
         $request->validate([
             'email_or_username' => 'required|min:6|max:255',
             'password' => 'required|min:6|max:100',
-        ], [
-            'email_or_username.required' => 'Eメール又はユーザーネームは空白がいけません',
-            'email_or_username.min' => 'Eメール又はユーザーネームは最低6文字、最大255文字としてください！',
-            'email_or_username.max' => 'Eメール又はユーザーネームは最低6文字、最大255文字としてください！',
-            'password.required' => 'パスワードは空白がいけません',
-            'password.min' => 'パスワードは最低6文字、最大100文字としてください！',
-            'password.min' => 'パスワードは最低6文字、最大100文字としてください！',
         ]);
 
         $credentials = $this->credentials_process($request);
