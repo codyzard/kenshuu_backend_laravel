@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Article;
 use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -38,10 +39,13 @@ class ArticleController extends Controller
      */
     public function new()
     {
-        $categories = $this->categoryModel->get_all_categories();
-        return view('articles.new', [
-            'categories' => $categories,
-        ]);
+        if (Auth::check()) {
+            $categories = $this->categoryModel->get_all_categories();
+            return view('articles.new', [
+                'categories' => $categories,
+            ]);
+        }
+        return redirect()->route('authors.login')->withErrors('ログインが必要です！');
     }
 
     /**
@@ -61,13 +65,13 @@ class ArticleController extends Controller
             'content.required' => 'コンテンツが空自にすることはできません！',
             'categories.required' => 'カテゴライズを最少1つ選んでください！'
         ]);
-        if ($validatedData) {
+        if ($validatedData && Auth::check()) {
             $title = $request->title;
             $images = null;
             $thumbnail = null;
             $content = $request->content;
             $categories_id = $request->categories;
-            $author_id = 1; // しばらくアサインメント
+            $author_id = Auth::user()->id; // しばらくアサインメント
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 $thumbnail = $request->thumbnail;
@@ -89,7 +93,7 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article_edit = $this->articleModel->get_article_for_edit($id);
-        if ($article_edit) {
+        if ($article_edit && Auth::check() && Auth::user()->id === $article_edit->author_id) {
             return view('articles.edit', [
                 'article_edit' => $article_edit,
             ]);
@@ -132,10 +136,13 @@ class ArticleController extends Controller
      */
     public function delete($id)
     {
-        $is_success = $this->articleModel->delete_article($id);
-        if ($is_success) {
-            return redirect()->route('homes.home')->with('message', '削除が成功しました！');
+        if (Auth::check() && Auth::user()->articles->find($id)) {
+            $is_success = $this->articleModel->delete_article($id);
+            if ($is_success) {
+                return redirect()->route('homes.home')->with('message', '削除が成功しました！');
+            }
+            return redirect()->route('articles.show', $id)->withErrors('削除が失敗しました！');
         }
-        return redirect()->route('articles.show', $id)->withErrors('削除が失敗しました！');
+        return redirect()->route('notfounds.not_found');
     }
 }

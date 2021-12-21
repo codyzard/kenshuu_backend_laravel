@@ -138,7 +138,7 @@ class Article extends Model
      */
     public function get_article_for_edit($id)
     {
-        return Article::find($id, ['id', 'title', 'content']);
+        return Article::find($id, ['id', 'title', 'content', 'author_id'])->load('author:id');
     }
 
     /**
