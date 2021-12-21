@@ -42,21 +42,6 @@ class AuthorController extends Controller
             'fullname' => 'required',
             'password' => 'required_with:cpassword|same:cpassword|min:6|max:100|',
             'cpassword' => 'min:6|max:100',
-        ], [
-            'email.required' => 'Eメールは空白がいけません',
-            'email.min' => 'Eメールは最低6文字、最大255文字としてください！',
-            'email.max' => 'Eメールは最低6文字、最大255文字としてください！',
-            'email.email' => 'Eメールは無効でした！',
-            'email.unique' => 'Eメールは存在しました！',
-            'username.unique' => 'ユーザーネームは存在しました！',
-            'username.required' => 'ユーザーネームは空白がいけません',
-            'username.min' => 'ユーザーネームは最低6文字、最大255文字としてください！',
-            'username.max' => 'ユーザーネームは最低6文字、最大255文字としてください！',
-            'fullname.required' => 'フルネームは空白がいけません',
-            'password.min' => 'パスワードは最低6文字、最大100文字としてください！',
-            'password.max' => 'パスワードは最低6文字、最大100文字としてください！',
-            'cpassword.min' => '確認パスワードは最低6文字、最大100文字としてください！',
-            'cpassword.max' => '確認パスワードは最低6文字、最大100文字としてください！',
         ]);
 
         $email = $request->email;
@@ -210,13 +195,6 @@ class AuthorController extends Controller
             'address' => 'required',
             'birthday' => 'required',
             'phone' => 'required|min:10|max:14',
-        ], [
-            'fullname.required' => 'フルネームは空白がいけません！',
-            'address.required' => '住所は空白がいけません！',
-            'birthday.required' => '生年月日は空白がいけません！',
-            'phone.required' => '電話番号は空白がいけません！',
-            'phone.min' => '電話番号は最低10文字、最大14文字としてください！',
-            'phone.max' => '電話番号は最低10文字、最大14文字としてください！',
         ]);
         $fullname = $request->fullname;
         $address = $request->address;
@@ -262,13 +240,6 @@ class AuthorController extends Controller
                 'old_password' => 'required|min:6|max:100',
                 'new_password' => 'required_with:cnew_password|same:cnew_password|min:6|max:100|',
                 'cnew_password' => 'required|min:6|max:100',
-            ], [
-                'old_password.required' => 'オールドパスワードは空白がいけません！',
-                'new_password.required' => '新しいパスワードは空白がいけません！',
-                'cnew_password.required' => 'パスワード確認は空白がいけません！',
-                'new_password.same' => '新しいパスワードとパスワード確認は同じでなければなりません！',
-                'min' => 'パスワードは最低10文字、最大14文字としてください！',
-                'max' => 'パスワードは最低10文字、最大14文字としてください！',
             ]);
             $old_password = $request->old_password;
             $new_password = $request->new_password;

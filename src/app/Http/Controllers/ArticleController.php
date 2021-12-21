@@ -60,10 +60,6 @@ class ArticleController extends Controller
             'title' => 'required',
             'content' => 'required',
             'categories' => 'required',
-        ], [
-            'title.required' => 'タイトルが空自にすることはできません！',
-            'content.required' => 'コンテンツが空自にすることはできません！',
-            'categories.required' => 'カテゴライズを最少1つ選んでください！'
         ]);
         if ($validatedData && Auth::check()) {
             $title = $request->title;
@@ -113,9 +109,6 @@ class ArticleController extends Controller
         $validatedData = $this->validate($request, [
             'title' => 'required',
             'content' => 'required',
-        ], [
-            'title.required' => 'タイトルが空自にすることはできません！',
-            'content.required' => 'コンテンツが空自にすることはできません！',
         ]);
         if ($validatedData) {
             $title = $request->title;
