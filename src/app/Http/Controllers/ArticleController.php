@@ -14,6 +14,7 @@ class ArticleController extends Controller
     {
         $this->articleModel = new Article();
         $this->categoryModel = new Category();
+        $this->middleware('author_authenticate')->except('show');
     }
     /**
      * Showing article with $id
@@ -39,13 +40,10 @@ class ArticleController extends Controller
      */
     public function new()
     {
-        if (Auth::check()) {
-            $categories = $this->categoryModel->get_all_categories();
-            return view('articles.new', [
-                'categories' => $categories,
-            ]);
-        }
-        return redirect()->route('authors.login')->withErrors('ログインが必要です！');
+        $categories = $this->categoryModel->get_all_categories();
+        return view('articles.new', [
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -89,7 +87,7 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article_edit = $this->articleModel->get_article_for_edit($id);
-        if ($article_edit && Auth::check() && Auth::user()->id === $article_edit->author_id) {
+        if ($article_edit && Auth::user()->articles->find($article_edit->id)) {
             return view('articles.edit', [
                 'article_edit' => $article_edit,
             ]);
@@ -129,7 +127,7 @@ class ArticleController extends Controller
      */
     public function delete($id)
     {
-        if (Auth::check() && Auth::user()->articles->find($id)) {
+        if (Auth::user()->articles->find($id)) {
             $is_success = $this->articleModel->delete_article($id);
             if ($is_success) {
                 return redirect()->route('homes.home')->with('message', '削除が成功しました！');

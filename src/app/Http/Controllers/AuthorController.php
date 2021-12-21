@@ -15,6 +15,19 @@ class AuthorController extends Controller
     public function __construct()
     {
         $this->authorModel = new Author();
+        $this->middleware('author_authenticate')->only([
+            'update_avatar',
+            'edit_profile',
+            'update_profile',
+            'edit_password',
+            'update_password',
+        ]);
+        $this->middleware('author_authorize')->only([
+            'edit_profile',
+            'update_profile',
+            'edit_password',
+            'update_password',
+        ]);
     }
 
     /**
@@ -156,7 +169,7 @@ class AuthorController extends Controller
     public function update_avatar(Request $request)
     {
         $author_id = $request->author_id;
-        if ($author_id && $request->hasFile('update_avatar')) {
+        if ($author_id && $request->hasFile('update_avatar') && Auth::user()->id == $author_id) {
             $image_src = $this->authorModel->update_avatar($author_id, $request->file('update_avatar'));
             return response()->json([
                 'image_src' => $image_src->avatar,
@@ -170,15 +183,11 @@ class AuthorController extends Controller
      * @param  int $id
      * @return void
      */
-    public function edit_profile($id)
+    public function edit_profile()
     {
-        $author = Auth::user();
-        if ($author && $author->id == $id) {
-            return view('authors.update_profile', [
-                'author' => $author,
-            ]);
-        }
-        return redirect()->route('notfounds.not_found');
+        return view('authors.update_profile', [
+            'author' => Auth::user(),
+        ]);
     }
 
     /**
@@ -200,7 +209,8 @@ class AuthorController extends Controller
         $address = $request->address;
         $birthday = $request->birthday;
         $phone = $request->phone;
-        if (Author::where('phone', $phone)->count() > 0) {
+        // Check phone number existed but if user's phone number is 0123456789, 0123456789 saved again will be accept
+        if (Author::where('phone', $phone)->count() > 0 && Author::where('phone', $phone)->first()->id != $id) {
             return redirect()->route('authors.edit_profile', $id)->withErrors('電話番号は存在しました！');
         }
         $is_success = $this->authorModel->update_profile($id, $fullname, $address, $birthday, $phone);
@@ -216,15 +226,11 @@ class AuthorController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function edit_password($id)
+    public function edit_password()
     {
-        $author = Auth::user();
-        if ($author && $author->id == $id) {
-            return view('authors.update_password', [
-                'author' => $author,
-            ]);
-        }
-        return redirect()->route('notfounds.not_found');
+        return view('authors.update_password', [
+            'author' => Auth::user(),
+        ]);
     }
 
     /**
