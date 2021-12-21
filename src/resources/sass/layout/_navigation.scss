@@ -1,0 +1,31 @@
+/* Navigation */
+
+nav {
+  min-width: 1126px;
+  height: 36px;
+  background-color: white;
+}
+
+.categories {
+  width: 1126px;
+  height: 36px;
+  margin: 0 auto;
+  @include flex_horizontal_vertical_center;
+  gap: 20px;
+  &__item {
+    a {
+      font-size: 1.3rem;
+      color: $prtimes_color;
+      transition: all 0.1s;
+      letter-spacing: 1px;
+      &:hover {
+        font-weight: 700;
+      }
+    }
+    &--active-item a {
+      font-weight: 700;
+    }
+  }
+}
+
+/* end Navigation */

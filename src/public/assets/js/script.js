@@ -181,14 +181,26 @@ $(document).ready(function () {
 
 /***/ }),
 
+/***/ "./resources/sass/main.scss":
+/*!**********************************!*\
+  !*** ./resources/sass/main.scss ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ 0:
-/*!**************************************!*\
-  !*** multi ./resources/js/script.js ***!
-  \**************************************/
+/*!*****************************************************************!*\
+  !*** multi ./resources/js/script.js ./resources/sass/main.scss ***!
+  \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\mrahn\Desktop\hoc css\project\prtimes_kenshu\book\BE\PHP-Docker-SQL\Exercise\article_app_laravel\src\resources\js\script.js */"./resources/js/script.js");
+__webpack_require__(/*! C:\Users\mrahn\Desktop\hoc css\project\prtimes_kenshu\book\BE\PHP-Docker-SQL\Exercise\article_app_laravel\src\resources\js\script.js */"./resources/js/script.js");
+module.exports = __webpack_require__(/*! C:\Users\mrahn\Desktop\hoc css\project\prtimes_kenshu\book\BE\PHP-Docker-SQL\Exercise\article_app_laravel\src\resources\sass\main.scss */"./resources/sass/main.scss");
 
 
 /***/ })

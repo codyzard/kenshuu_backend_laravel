@@ -1,0 +1,74 @@
+/* Ranking */
+
+.ranking {
+  min-width: 1126px;
+  background-color: $second_bg_color;
+}
+
+/* <add parent class 'ranking' for avoiding conflicting main-content's articles > */
+
+.ranking .articles {
+  width: 1126px;
+  height: 280px;
+  margin: 0 auto;
+  padding: 20px 0;
+  @include flex_horizontal_spacebetween;
+  &__order-number {
+    position: absolute;
+    z-index: 10;
+    background-color: $prtimes_color;
+    padding: 3px 7px;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: white;
+    font-weight: 700;
+  }
+  &__item {
+    width: 180px;
+    height: 240px;
+    position: relative;
+    background-color: white;
+    @include flex_vertical_spacebetween;
+  }
+  &__cover {
+    overflow: hidden;
+    img {
+      width: 180px;
+      height: 101px;
+      transition: all 0.8s;
+    }
+  }
+  &__content {
+    font-size: 1.3rem;
+    padding: 7px 7px 0 7px;
+    @include articles_content_wrap;
+  }
+  &__stamp {
+    padding: 7px;
+    p {
+      font-size: 1.2rem;
+      color: $sub_text;
+    }
+  }
+
+  // article interaction
+  &__link:hover {
+    & > .articles__cover img {
+      transform: scale(1.2);
+    }
+    & > .articles__content {
+      text-decoration: underline;
+      color: $btn_color;
+    }
+  }
+  &__company-release:hover {
+    color: black;
+  }
+  &__pv:hover {
+    color: black;
+  }
+}
+
+/* end <add parent class 'ranking' for avoiding conflicting main-content's articles > */
+
+/* end Ranking */

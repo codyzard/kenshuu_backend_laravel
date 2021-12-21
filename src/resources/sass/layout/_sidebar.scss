@@ -1,0 +1,31 @@
+/* ---sidebar---*/
+
+.side {
+  width: 312px;
+}
+
+.keyword .title {
+  font-size: 1.8rem;
+}
+
+.hot-keywords {
+  margin: 20px 0;
+  border-bottom: 1px solid $line_color;
+  padding-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  &__item a {
+    font-size: 1.2rem;
+    background-color: $second_bg_color;
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 50px;
+    border: 1px solid $second_bg_color;
+    &:hover {
+      background-color: white;
+    }
+  }
+}
+
+/* ---end sidebar---*/

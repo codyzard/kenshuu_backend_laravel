@@ -1,0 +1,14 @@
+/* Main */
+
+.main {
+  min-width: 1126px;
+  margin: 30px auto;
+  margin-bottom: 70px;
+  @include flex_horizontal_center;
+  gap: 14px;
+}
+
+@import "content";
+@import "sidebar";
+
+/* end Main */
