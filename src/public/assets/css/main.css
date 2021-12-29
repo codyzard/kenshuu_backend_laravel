@@ -146,10 +146,10 @@ button {
   background-color: #ffebe9;
 }
 
-.not-found {
+.error-page {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  margin: 4.5%;
 }
 
 /* end Common */
@@ -783,10 +783,10 @@ button {
   background-color: #ffebe9;
 }
 
-.not-found {
+.error-page {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  margin: 4.5%;
 }
 
 /* end Common */
@@ -968,10 +968,10 @@ button {
   background-color: #ffebe9;
 }
 
-.not-found {
+.error-page {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  margin: 4.5%;
 }
 
 /* end Common */

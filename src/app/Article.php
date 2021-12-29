@@ -68,11 +68,11 @@ class Article extends Model
      * getting article by id
      *
      * @param  int $id
-     * @return $article or false
+     * @return $article|false
      */
     public function get_article_by_id($id)
     {
-        $article = Article::find($id);
+        $article = Article::findOrFail($id);
         if ($article) {
             $article->page_view += 1;
             if ($article->save()) {
@@ -91,34 +91,30 @@ class Article extends Model
      * @param  mixed $content
      * @param  mixed $categories_id
      * @param  mixed $author_id
-     * @return void
+     * @return $article|false
      */
-    public function store_new_article($title, $images, $thumbnail, $content, $categories_id, $author_id)
+    public function store_new_article($images, $thumbnail, $categories_id)
     {
         DB::beginTransaction();
         try {
-            $article = new Article();
-            $article->title = $title;
-            $article->content = $content;
-            $article->author_id = $author_id;
             $filename = [];
             $location = '';
-            if ($article->save()) {
+            if ($this->save()) {
                 // save image if images exist
                 if ($images && $thumbnail) {
                     foreach ($images as $img) {
                         $location = public_path(self::PUBLIC_IMAGE_ARTICLE_PATH);
                         $image_name = Helper::store_image($img, $location);
                         $filename[] = $image_name;
-                        $img_db_obj = $article->images()->create(['src' => $image_name]); //attach images
+                        $img_db_obj = $this->images()->create(['src' => $image_name]); //attach images
                         if ($img->getClientOriginalName() == $thumbnail) {
-                            $article->update(['thumbnail_id' => $img_db_obj->id]);
+                            $this->update(['thumbnail_id' => $img_db_obj->id]);
                         }
                     }
                 }
-                $article->categories()->attach($categories_id); // attach categories
+                $this->categories()->attach($categories_id);
                 DB::commit();
-                return $article;
+                return $this;
             } else {
                 DB::rollBack();
                 return false;
@@ -134,11 +130,13 @@ class Article extends Model
      * Getting article's title, content by $id for edit
      *
      * @param  int $id
-     * @return $article
+     * @return $article|false
      */
     public function get_article_for_edit($id)
     {
-        return Article::find($id, ['id', 'title', 'content', 'author_id'])->load('author:id');
+        if (Article::find($id))
+            return Article::find($id, ['id', 'title', 'content', 'author_id'])->load('author:id');
+        return false;
     }
 
     /**

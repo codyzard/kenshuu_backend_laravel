@@ -3,6 +3,7 @@
 namespace App\Helper;
 
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 
 class Helper
@@ -90,9 +91,11 @@ class Helper
     public static function remove_image_from_storage($filesName = [], $location)
     {
         try {
-            foreach ($filesName as $fn) {
-                if (file_exists($location . $fn)) { //check file exist before remove
-                    unlink($location . $fn);
+            if (!empty($filesName)) {
+                foreach ($filesName as $fn) {
+                    if (file_exists($location . $fn)) { //check file exist before remove
+                        unlink($location . $fn);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -100,5 +103,11 @@ class Helper
             return false;
         }
         return true;
+    }
+
+    public static function isLogged()
+    {
+        if (Auth::check()) return true;
+        return false;
     }
 }

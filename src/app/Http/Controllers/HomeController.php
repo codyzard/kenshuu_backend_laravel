@@ -8,9 +8,9 @@ use App\Category;
 class HomeController extends Controller
 {
     private $articleModel;
-    public function __construct()
+    public function __construct(Article $article)
     {
-        $this->articleModel = new Article();
+        $this->articleModel = $article;
     }
     public function home()
     {

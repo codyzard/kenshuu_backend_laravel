@@ -41,20 +41,16 @@ class Author extends Authenticatable
      * @param  string $password
      * @return bool
      */
-    public function create($email, $username, $fullname, $avatar, $password)
+    public function create()
     {
         DB::beginTransaction();
         try {
-            $author = new Author();
-            $author->email = $email;
-            $author->username = $username;
-            $author->fullname = $fullname;
-            $author->password = bcrypt($password);
-            if ($author->save()) {
-                if ($avatar && $this->insert_avatar($author->id, $avatar)) {
-                    DB::commit();
-                    return Author::find($author->id);
+            if ($this->save()) {
+                if ($this->avatar) {
+                    $this->insert_avatar($this->id, $this->avatar);
                 }
+                DB::commit();
+                return Author::find($this->id);
             }
             DB::rollBack();
             return false;
@@ -93,14 +89,17 @@ class Author extends Authenticatable
      *
      * @param  int $author_id
      * @param  file $avatar
-     * @return $author
+     * @return $author|false
      */
     public function update_avatar($author_id, $avatar)
     {
-        $old_avatar[] = Author::find($author_id, ['avatar'])->avatar;
+        //prevent initial author avatar_src: ""
+        if (!empty(Author::find($author_id, ['avatar'])->avatar)) {
+            $old_avatar[] = Author::find($author_id, ['avatar'])->avatar;
+            Helper::remove_image_from_storage($old_avatar, public_path(self::PUBLIC_IMAGE_AUTHOR_PATH));
+        }
         $is_sucess = $this->insert_avatar($author_id, $avatar);
         if ($is_sucess) {
-            Helper::remove_image_from_storage($old_avatar, public_path(self::PUBLIC_IMAGE_AUTHOR_PATH));
             return Author::find($author_id, ['avatar']);
         }
         return false;
@@ -118,7 +117,7 @@ class Author extends Authenticatable
      */
     public function update_profile($id, $fullname, $address, $birthday, $phone)
     {
-        return Author::find($id)->update([
+        return Author::findOrFail($id)->update([
             'fullname' => $fullname,
             'address' => $address,
             'birthday' => $birthday,

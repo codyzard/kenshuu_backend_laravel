@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use App\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
     private $articleModel, $categoryModel;
-    public function __construct()
+    public function __construct(Article $article, Category $category)
     {
-        $this->articleModel = new Article();
-        $this->categoryModel = new Category();
+        $this->articleModel = $article;
+        $this->categoryModel = $category;
         $this->middleware('author_authenticate')->except('show');
     }
     /**
@@ -30,7 +31,7 @@ class ArticleController extends Controller
                 'article' => $article,
             ]);
         }
-        return redirect()->route('notfounds.not_found');
+        return abort(404);
     }
 
     /**
@@ -50,32 +51,25 @@ class ArticleController extends Controller
      * Creating new article
      *
      * @param  mixed $request(title, content, categories, images(or not), thumbnail(or not))
-     * @return void
+     * @return redirect
      */
-    public function create(Request $request)
+    public function create(StoreArticleRequest $request)
     {
-        $validatedData = $this->validate($request, [
-            'title' => 'required',
-            'content' => 'required',
-            'categories' => 'required',
-        ]);
-        if ($validatedData && Auth::check()) {
-            $title = $request->title;
-            $images = null;
-            $thumbnail = null;
-            $content = $request->content;
-            $categories_id = $request->categories;
-            $author_id = Auth::user()->id; // しばらくアサインメント
-            if ($request->hasFile('images')) {
-                $images = $request->file('images');
-                $thumbnail = $request->thumbnail;
-            }
-            $is_success = $this->articleModel->store_new_article($title, $images, $thumbnail, $content, $categories_id, $author_id);
-            if ($is_success) {
-                return redirect()->back()->with('message', '記事投稿が成功でした！');
-            }
-            return redirect('/');
+        $this->articleModel->title = $request->title;
+        $this->articleModel->content = $request->content;
+        $categories_id = $request->categories;
+        $this->articleModel->author_id = Auth::user()->id;
+        $images = null;
+        $thumbnail = null;
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');
+            $thumbnail = $request->thumbnail;
         }
+        $is_success = $this->articleModel->store_new_article($images, $thumbnail, $categories_id);
+        if ($is_success) {
+            return redirect()->back()->with('message', '記事投稿が成功でした！');
+        }
+        return redirect()->route('homes.home')->withErrors('予期しないエラー!');
     }
 
     /**
@@ -92,7 +86,7 @@ class ArticleController extends Controller
                 'article_edit' => $article_edit,
             ]);
         }
-        return redirect()->route('notfounds.not_found');
+        return abort(403);
     }
 
     /**
@@ -100,30 +94,24 @@ class ArticleController extends Controller
      *
      * @param  mixed $request
      * @param  mixed $id
-     * @return void
+     * @return redirect
      */
-    public function update(Request $request, $id)
+    public function update(UpdateArticleRequest $request, $id)
     {
-        $validatedData = $this->validate($request, [
-            'title' => 'required',
-            'content' => 'required',
-        ]);
-        if ($validatedData) {
-            $title = $request->title;
-            $content = $request->content;
-            $is_success = $this->articleModel->update_article($id, $title, $content);
-            if ($is_success) {
-                return redirect()->route('articles.show', $id)->with('message', '記事編集が成功でした！');
-            }
-            return redirect()->route('articles.edit', $id)->withErrors('更新が失敗しました！');
+        $this->articleModel = Article::find($id);
+        $this->articleModel->title = $request->title;
+        $this->articleModel->content = $request->content;
+        if ($this->articleModel->save()) {
+            return redirect()->route('articles.show', $id)->with('message', '記事編集が成功でした！');
         }
+        return redirect()->route('articles.edit', $id)->withErrors('更新が失敗しました！');
     }
 
     /**
      * Deleting article by $id
      *
      * @param  int $id
-     * @return void
+     * @return redirect|view
      */
     public function delete($id)
     {
@@ -134,6 +122,6 @@ class ArticleController extends Controller
             }
             return redirect()->route('articles.show', $id)->withErrors('削除が失敗しました！');
         }
-        return redirect()->route('notfounds.not_found');
+        return abort(403);
     }
 }

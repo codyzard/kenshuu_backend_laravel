@@ -13,17 +13,6 @@ return [
     |
     */
 
-    /*
-    |--------------------------------------------------------------------------
-    | Validation Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines contain the default error messages used by
-    | the validator class. Some of these rules have multiple versions such
-    | as the size rules. Feel free to tweak each of these messages here.
-    |
-    */
-
     'accepted' => 'The :attribute must be accepted.',
     'active_url' => 'The :attribute is not a valid URL.',
     'after' => 'The :attribute must be a date after :date.',
@@ -50,7 +39,7 @@ return [
     'digits_between' => 'The :attribute must be between :min and :max digits.',
     'dimensions' => 'The :attribute has invalid image dimensions.',
     'distinct' => 'The :attribute field has a duplicate value.',
-    'email' => 'The :attribute must be a valid email address.',
+    'email' => ':attributeは不正でした！',
     'ends_with' => 'The :attribute must end with one of the following: :values.',
     'exists' => 'The selected :attribute is invalid.',
     'file' => 'The :attribute must be a file.',
@@ -90,7 +79,7 @@ return [
     'max' => [
         'numeric' => 'The :attribute may not be greater than :max.',
         'file' => 'The :attribute may not be greater than :max kilobytes.',
-        'string' => 'The :attribute may not be greater than :max characters.',
+        'string' => ':attributeは最大:max文字キャラクターとしてください！',
         'array' => 'The :attribute may not have more than :max items.',
     ],
     'mimes' => 'The :attribute must be a file of type: :values.',
@@ -98,7 +87,7 @@ return [
     'min' => [
         'numeric' => 'The :attribute must be at least :min.',
         'file' => 'The :attribute must be at least :min kilobytes.',
-        'string' => 'The :attribute must be at least :min characters.',
+        'string' => ':attributeは最低:min文字キャラクターとしてください！',
         'array' => 'The :attribute must have at least :min items.',
     ],
     'not_in' => 'The selected :attribute is invalid.',
@@ -107,14 +96,14 @@ return [
     'password' => 'The password is incorrect.',
     'present' => 'The :attribute field must be present.',
     'regex' => 'The :attribute format is invalid.',
-    'required' => 'The :attribute field is required.',
+    'required' => ':attributeは必須です！',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',
     'required_with' => 'The :attribute field is required when :values is present.',
     'required_with_all' => 'The :attribute field is required when :values are present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
-    'same' => 'The :attribute and :other must match.',
+    'same' => ':attribute又は:otherは同じでなければなりません！',
     'size' => [
         'numeric' => 'The :attribute must be :size.',
         'file' => 'The :attribute must be :size kilobytes.',
@@ -124,7 +113,7 @@ return [
     'starts_with' => 'The :attribute must start with one of the following: :values.',
     'string' => 'The :attribute must be a string.',
     'timezone' => 'The :attribute must be a valid zone.',
-    'unique' => 'The :attribute has already been taken.',
+    'unique' => '入力された:attributeは既に使用されています！',
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
@@ -141,9 +130,19 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+        // 'email' => [
+        //     'required' => 'メールアドレスを入力してください！',
+        //     'email' => '正式なメールアドレスを入力してください！',
+        //     'unique' => '入力されたEメール名は既に使用されています！',
+        // ],
+        // 'username' => [
+        //     'required' => 'ユーザー名を入力してください！',
+        //     'unique' => '入力されたユーザー名は既に使用されています！',
+        // ],
+        // 'email_or_username' => [
+        //     'required' => 'Eメール又はユーザーネームは必須です！',
+        //     'min' => 'Eメール又はユーザーネームは最低:min文字キャラクターとしてください！',
+        // ],
     ],
 
     /*
@@ -157,6 +156,24 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'email' => 'Eメール',
+        'username' => 'ユーザーネーム',
+        'email_or_username' => 'ユーザーネーム又はEメール',
+        'fullname' => 'フルネーム',
+        'password' => 'パスワード',
+        'cpassword' => '確認パスワード',
+        'old_password' => 'オールドパスワード',
+        'new_password' => '新しいパスワード',
+        'address' => '住所',
+        'phone' => '電話番号',
+        'birthday' => '生年月日',
+        'title' => 'タイトル',
+        'content' => 'コンテンツ',
+        'image' => 'イメージ',
+        'images' => 'イメージズ',
+        'category' => 'カテゴリー',
+        'categories' => 'カテゴライズ',
+    ],
 
 ];

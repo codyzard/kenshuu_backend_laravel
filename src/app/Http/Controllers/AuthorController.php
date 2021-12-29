@@ -6,15 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Author;
+use App\Http\Requests\LoginAuthorRequest;
+use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorPasswordRequest;
+use App\Http\Requests\UpdateAuthorProfileRequest;
 
 class AuthorController extends Controller
 {
 
     private $authorModel;
 
-    public function __construct()
+    public function __construct(Author $author)
     {
-        $this->authorModel = new Author();
+        $this->authorModel = $author;
         $this->middleware('author_authenticate')->only([
             'update_avatar',
             'edit_profile',
@@ -47,25 +51,16 @@ class AuthorController extends Controller
      * @param  mixed $request
      * @return view
      */
-    public function register_process(Request $request)
+    public function register_process(StoreAuthorRequest $request)
     {
-        $request->validate([
-            'email' => 'required|min:6|max:255|email|unique:authors,email',
-            'username' => 'required|min:6|max:255|unique:authors,username',
-            'fullname' => 'required',
-            'password' => 'required_with:cpassword|same:cpassword|min:6|max:100|',
-            'cpassword' => 'min:6|max:100',
-        ]);
-
-        $email = $request->email;
-        $username = $request->username;
-        $fullname = $request->fullname;
-        $avatar = null;
-        $password = $request->password;
+        $this->authorModel->email = $request->email;
+        $this->authorModel->username = $request->username;
+        $this->authorModel->fullname = $request->fullname;
+        $this->authorModel->password = $request->password;
         if ($request->hasFile('profile-avatar')) {
-            $avatar = $request->file('profile-avatar');
+            $this->authorModel->avatar = $request->file('profile-avatar');
         }
-        $new_author = $this->authorModel->create($email, $username, $fullname, $avatar, $password);
+        $new_author = $this->authorModel->create();
         if ($new_author) {
             Auth::login($new_author);
             return redirect()->route('homes.home')->with('message', 'アカウントを登録することは成功しました！');
@@ -90,13 +85,8 @@ class AuthorController extends Controller
      * @param  mixed $request
      * @return view
      */
-    public function login_process(Request $request)
+    public function login_process(LoginAuthorRequest $request)
     {
-        $request->validate([
-            'email_or_username' => 'required|min:6|max:255',
-            'password' => 'required|min:6|max:100',
-        ]);
-
         $credentials = $this->credentials_process($request);
         if (Auth::attempt($credentials)) {
             return redirect()->route('homes.home')->with('message', 'ログインしました！');
@@ -111,7 +101,7 @@ class AuthorController extends Controller
      * @param  mixed $request
      * @return array
      */
-    public function credentials_process(Request $request)
+    public function credentials_process(LoginAuthorRequest $request)
     {
         $field = filter_var($request->email_or_username, FILTER_VALIDATE_EMAIL) ?
             'email'
@@ -140,7 +130,7 @@ class AuthorController extends Controller
      * Rendering profile
      *
      * @param  int $id
-     * @return void
+     * @return view
      */
     public function profile($id)
     {
@@ -150,14 +140,14 @@ class AuthorController extends Controller
                 'author' => Author::find($id),
             ]);
         }
-        return redirect()->route('notfounds.not_found');
+        return abort(404);
     }
 
     /**
      * Updating profile's avatar
      *
      * @param  mixed $request
-     * @return void
+     * @return json
      */
     public function update_avatar(Request $request)
     {
@@ -174,7 +164,7 @@ class AuthorController extends Controller
      * Rendering profile's edit form
      *
      * @param  int $id
-     * @return void
+     * @return view
      */
     public function edit_profile()
     {
@@ -188,26 +178,20 @@ class AuthorController extends Controller
      *
      * @param  mixed $request
      * @param  mixed $id
-     * @return void
+     * @return redirect
      */
-    public function update_profile(Request $request, $id)
+    public function update_profile(UpdateAuthorProfileRequest $request, $id)
     {
-        $request->validate([
-            'fullname' => 'required',
-            'address' => 'required',
-            'birthday' => 'required',
-            'phone' => 'required|min:10|max:14',
-        ]);
-        $fullname = $request->fullname;
-        $address = $request->address;
-        $birthday = $request->birthday;
-        $phone = $request->phone;
+        $this->authorModel = Author::findOrFail($id);
+        $this->authorModel->fullname = $request->fullname;
+        $this->authorModel->address = $request->address;
+        $this->authorModel->birthday = $request->birthday;
+        $this->authorModel->phone = $request->phone;
         // Check phone number existed but if user's phone number is 0123456789, 0123456789 saved again will be accept
-        if (Author::where('phone', $phone)->count() > 0 && Author::where('phone', $phone)->first()->id != $id) {
+        if (Author::where('phone', $this->authorModel->phone)->count() > 0 && Author::where('phone', $this->authorModel->phone)->first()->id != $id) {
             return redirect()->route('authors.edit_profile', $id)->withErrors('電話番号は存在しました！');
         }
-        $is_success = $this->authorModel->update_profile($id, $fullname, $address, $birthday, $phone);
-        if ($is_success) {
+        if ($this->authorModel->save()) {
             return redirect()->route('authors.profile', $id)->with('message', 'プロフィールを変更することは成功でした！');
         }
         return redirect()->route('authors.edit_profile', $id)->withErrors('プロフィールを変更することは失敗でした！');
@@ -217,7 +201,7 @@ class AuthorController extends Controller
      * Rendering password's edit form
      *
      * @param  mixed $id
-     * @return void
+     * @return redirect
      */
     public function edit_password()
     {
@@ -230,24 +214,16 @@ class AuthorController extends Controller
      * Updating password
      *
      * @param  mixed $request
-     * @return void
+     * @return redirect
      */
-    public function update_password(Request $request)
+    public function update_password(UpdateAuthorPasswordRequest $request)
     {
-        if (Auth::user()) {
-            $request->validate([
-                'old_password' => 'required|min:6|max:100',
-                'new_password' => 'required_with:cnew_password|same:cnew_password|min:6|max:100|',
-                'cnew_password' => 'required|min:6|max:100',
-            ]);
-            $old_password = $request->old_password;
-            $new_password = $request->new_password;
-            $is_success = $this->authorModel->update_password($old_password, $new_password);
-            if ($is_success) {
-                return redirect()->route('authors.profile', Auth::user()->id)->with('message', 'パスワードを変更することは成功でした！');
-            }
-            return redirect()->back()->withErrors('オールドパスワードは間違いました！');
+        $old_password = $request->old_password;
+        $new_password = $request->new_password;
+        $is_success = $this->authorModel->update_password($old_password, $new_password);
+        if ($is_success) {
+            return redirect()->route('authors.profile', Auth::user()->id)->with('message', 'パスワードを変更することは成功でした！');
         }
-        return redirect()->route('notfounds.not_found');
+        return redirect()->back()->withErrors('オールドパスワードは間違いました！');
     }
 }
