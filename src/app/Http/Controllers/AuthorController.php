@@ -88,7 +88,8 @@ class AuthorController extends Controller
     public function login_process(LoginAuthorRequest $request)
     {
         $credentials = $this->credentials_process($request);
-        if (Auth::attempt($credentials)) {
+        $remember_check = $request->has('remember_me') ?: false;
+        if (Auth::attempt($credentials, $remember_check)) {
             return redirect()->route('homes.home')->with('message', 'ログインしました！');
         }
 

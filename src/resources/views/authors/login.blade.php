@@ -28,7 +28,7 @@
                 <a href="#" class="forgotten_password">パスワードをお忘れの方</a>
                 <input type="submit" value="ログイン" class="btn btn-submit" />
                 <div class="form-group">
-                    <input type="checkbox" name="save_session" /><label></i>次回から自動的にログイン</label>
+                    <input type="checkbox" id="remember_me" name="remember_me" /><label></i>次回から自動的にログイン</label>
                 </div>
                 <a href="{{ route('authors.register') }}"><input type="button" value="お申し込み" class="btn btn-res" /></a>
             </form>
