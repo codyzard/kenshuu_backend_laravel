@@ -134,9 +134,7 @@ class Article extends Model
      */
     public function get_article_for_edit($id)
     {
-        if (Article::find($id))
-            return Article::find($id, ['id', 'title', 'content', 'author_id'])->load('author:id');
-        return false;
+        return Article::findOrFail($id, ['id', 'title', 'content', 'author_id'])->load('author:id');
     }
 
     /**
@@ -149,7 +147,7 @@ class Article extends Model
      */
     public function update_article($id, $title, $content)
     {
-        return Article::find($id)->update([
+        return Article::findOrFail($id)->update([
             'title' => $title,
             'content' => $content,
         ]);
@@ -165,8 +163,8 @@ class Article extends Model
     {
         DB::beginTransaction();
         try {
-            $article_delete = Article::find($id);
-            $images_path = $article_delete->images()->pluck('src')->toArray();
+            $article_delete = Article::findOrFail($id);
+            $images_path = $article_delete ? $article_delete->images()->pluck('src')->toArray() : [];
             if ($article_delete && $article_delete->delete()) {
                 if (!empty($images_path)) {
                     if (Helper::remove_image_from_storage($images_path, public_path(self::PUBLIC_IMAGE_ARTICLE_PATH))) {

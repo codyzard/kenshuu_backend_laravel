@@ -81,7 +81,7 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article_edit = $this->articleModel->get_article_for_edit($id);
-        if ($article_edit && Auth::user()->articles->find($article_edit->id)) {
+        if ($article_edit && Auth::user()->articles()->findOrFail($article_edit->id)) {
             return view('articles.edit', [
                 'article_edit' => $article_edit,
             ]);
@@ -98,7 +98,7 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, $id)
     {
-        $this->articleModel = Article::find($id);
+        $this->articleModel = Article::findOrFail($id);
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;
         if ($this->articleModel->save()) {
@@ -115,7 +115,7 @@ class ArticleController extends Controller
      */
     public function delete($id)
     {
-        if (Auth::user()->articles->find($id)) {
+        if (Auth::user()->articles()->findOrFail($id)) {
             $is_success = $this->articleModel->delete_article($id);
             if ($is_success) {
                 return redirect()->route('homes.home')->with('message', '削除が成功しました！');

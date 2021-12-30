@@ -134,10 +134,10 @@ class AuthorController extends Controller
      */
     public function profile($id)
     {
-        $author = Author::find($id);
+        $author = Author::findOrFail($id);
         if ($author) {
             return view('authors.profile', [
-                'author' => Author::find($id),
+                'author' => $author,
             ]);
         }
         return abort(404);

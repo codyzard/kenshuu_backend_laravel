@@ -50,7 +50,7 @@ class Author extends Authenticatable
                     $this->insert_avatar($this->id, $this->avatar);
                 }
                 DB::commit();
-                return Author::find($this->id);
+                return Author::findOrFail($this->id);
             }
             DB::rollBack();
             return false;
@@ -74,7 +74,7 @@ class Author extends Authenticatable
             $location = public_path(self::PUBLIC_IMAGE_AUTHOR_PATH);
             $image_name = Helper::store_image($avatar, $location);
             $filename[] = $image_name;
-            return Author::find($author_id)->update([
+            return Author::findOrFail($author_id)->update([
                 'avatar' => $image_name,
             ]);
         } catch (Exception $e) {
@@ -94,13 +94,13 @@ class Author extends Authenticatable
     public function update_avatar($author_id, $avatar)
     {
         //prevent initial author avatar_src: ""
-        if (!empty(Author::find($author_id, ['avatar'])->avatar)) {
-            $old_avatar[] = Author::find($author_id, ['avatar'])->avatar;
+        if (!empty(Author::findOrFail($author_id, ['avatar'])->avatar)) {
+            $old_avatar[] = Author::findOrFail($author_id, ['avatar'])->avatar;
             Helper::remove_image_from_storage($old_avatar, public_path(self::PUBLIC_IMAGE_AUTHOR_PATH));
         }
         $is_sucess = $this->insert_avatar($author_id, $avatar);
         if ($is_sucess) {
-            return Author::find($author_id, ['avatar']);
+            return Author::findOrFail($author_id, ['avatar']);
         }
         return false;
     }
