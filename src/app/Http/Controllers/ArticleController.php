@@ -55,6 +55,7 @@ class ArticleController extends Controller
      */
     public function create(StoreArticleRequest $request)
     {
+        $this->authorize('create', $this->articleModel);
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;
         $categories_id = $request->categories;
@@ -81,7 +82,8 @@ class ArticleController extends Controller
     public function edit($id)
     {
         $article_edit = $this->articleModel->get_article_for_edit($id);
-        if ($article_edit && Auth::user()->articles()->findOrFail($article_edit->id)) {
+        if ($article_edit) {
+            $this->authorize('update', $article_edit);
             return view('articles.edit', [
                 'article_edit' => $article_edit,
             ]);
@@ -99,6 +101,7 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, $id)
     {
         $this->articleModel = Article::findOrFail($id);
+        $this->authorize('update',  $this->articleModel);
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;
         if ($this->articleModel->save()) {
@@ -115,7 +118,8 @@ class ArticleController extends Controller
      */
     public function delete($id)
     {
-        if (Auth::user()->articles()->findOrFail($id)) {
+        $article_delete = Auth::user()->articles()->findOrFail($id);
+        if ($article_delete && ($this->authorize('delete', $article_delete))) {
             $is_success = $this->articleModel->delete_article($id);
             if ($is_success) {
                 return redirect()->route('homes.home')->with('message', '削除が成功しました！');
