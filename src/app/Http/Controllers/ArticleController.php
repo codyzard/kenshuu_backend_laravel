@@ -13,6 +13,7 @@ class ArticleController extends Controller
     private $articleModel, $categoryModel;
     public function __construct(Article $article, Category $category)
     {
+        //Init model
         $this->articleModel = $article;
         $this->categoryModel = $category;
         $this->middleware('author_authenticate')->except('show');
@@ -55,21 +56,28 @@ class ArticleController extends Controller
      */
     public function create(StoreArticleRequest $request)
     {
+        // Check policy before create
         $this->authorize('create', $this->articleModel);
+        // Assgin request input to new Article object
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;
-        $categories_id = $request->categories;
         $this->articleModel->author_id = Auth::user()->id;
+        $categories_id = $request->categories;
         $images = null;
         $thumbnail = null;
+
+        // Process article add images if images exist
         if ($request->hasFile('images')) {
             $images = $request->file('images');
             $thumbnail = $request->thumbnail;
         }
+
+        // Create new article
         $is_success = $this->articleModel->store_new_article($images, $thumbnail, $categories_id);
         if ($is_success) {
             return redirect()->back()->with('message', '記事投稿が成功でした！');
         }
+
         return redirect()->route('homes.home')->withErrors('予期しないエラー!');
     }
 
@@ -100,10 +108,15 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, $id)
     {
+        // Find article base on $id if exists
         $this->articleModel = Article::findOrFail($id);
+        // Check policy before update
         $this->authorize('update',  $this->articleModel);
+        // Assgin request input to existed article base on $id
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;
+
+        // Update article
         if ($this->articleModel->save()) {
             return redirect()->route('articles.show', $id)->with('message', '記事編集が成功でした！');
         }
@@ -118,14 +131,19 @@ class ArticleController extends Controller
      */
     public function delete($id)
     {
+        // Find author's article base on $id if exists
         $article_delete = Auth::user()->articles()->findOrFail($id);
+
+        // Check policy before delete
         if ($article_delete && ($this->authorize('delete', $article_delete))) {
+            // Delete article
             $is_success = $this->articleModel->delete_article($id);
             if ($is_success) {
                 return redirect()->route('homes.home')->with('message', '削除が成功しました！');
             }
             return redirect()->route('articles.show', $id)->withErrors('削除が失敗しました！');
         }
+
         return abort(403);
     }
 }

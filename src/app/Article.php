@@ -72,6 +72,7 @@ class Article extends Model
      */
     public function get_article_by_id($id)
     {
+        // Find article base on $id if exists
         $article = Article::findOrFail($id);
         if ($article) {
             $article->page_view += 1;
@@ -95,32 +96,41 @@ class Article extends Model
      */
     public function store_new_article($images, $thumbnail, $categories_id)
     {
+        // Begin transaction
         DB::beginTransaction();
         try {
             $filename = [];
             $location = '';
             if ($this->save()) {
-                // save image if images exist
+                // Save image if images exist
                 if ($images && $thumbnail) {
                     foreach ($images as $img) {
                         $location = public_path(self::PUBLIC_IMAGE_ARTICLE_PATH);
                         $image_name = Helper::store_image($img, $location);
                         $filename[] = $image_name;
                         $img_db_obj = $this->images()->create(['src' => $image_name]); //attach images
+
+                        // Check file's original name == selected thumbnail's image name
                         if ($img->getClientOriginalName() == $thumbnail) {
-                            $this->update(['thumbnail_id' => $img_db_obj->id]);
+                            $this->update(['thumbnail_id' => $img_db_obj->id]); // assgin just saved image's id to article's thumbnail_id
                         }
                     }
                 }
+
+                // attach categories_id to $article->categories
                 $this->categories()->attach($categories_id);
+
+                // Save transaction
                 DB::commit();
                 return $this;
             } else {
+                // Roll back transaction
                 DB::rollBack();
                 return false;
             }
         } catch (Exception $e) {
             Helper::remove_image_from_storage($filename, $location);
+            // Transaction roll back;
             DB::rollBack();
             echo 'Error: ' . $e->getMessage();
         }
@@ -161,11 +171,16 @@ class Article extends Model
      */
     public function delete_article($id)
     {
+        // Begin transaction
         DB::beginTransaction();
         try {
+            // Find article base on $id if exists
             $article_delete = Article::findOrFail($id);
+            // Check articles contain images ?
             $images_path = $article_delete ? $article_delete->images()->pluck('src')->toArray() : [];
+
             if ($article_delete && $article_delete->delete()) {
+                // Delete images if images[] isn't empty
                 if (!empty($images_path)) {
                     if (Helper::remove_image_from_storage($images_path, public_path(self::PUBLIC_IMAGE_ARTICLE_PATH))) {
                         DB::commit();
@@ -175,10 +190,12 @@ class Article extends Model
                         return false;
                     }
                 }
+                // Save transaction
                 DB::commit();
                 return true;
             }
         } catch (Exception $e) {
+            // Roll back transaction
             DB::rollBack();
             echo 'Error: ' . $e->getMessage();
             return false;
