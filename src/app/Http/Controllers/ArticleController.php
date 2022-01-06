@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Article;
-use App\Category;
+use App\Models\Article;
+use App\Models\Category;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +58,7 @@ class ArticleController extends Controller
     {
         // Check policy before create
         $this->authorize('create', $this->articleModel);
+
         // Assgin request input to new Article object
         $this->articleModel->title = $request->title;
         $this->articleModel->content = $request->content;

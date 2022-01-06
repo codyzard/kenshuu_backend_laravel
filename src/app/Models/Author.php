@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Helper\Helper;
 use Exception;
@@ -28,7 +28,7 @@ class Author extends Authenticatable
      */
     public function articles()
     {
-        return $this->hasMany('App\Article');
+        return $this->hasMany('App\Models\Article');
     }
 
     /**

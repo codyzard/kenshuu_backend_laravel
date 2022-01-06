@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Author;
+use App\Models\Author;
 use App\Http\Requests\LoginAuthorRequest;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorPasswordRequest;
@@ -57,8 +57,8 @@ class AuthorController extends Controller
     public function register_process(StoreAuthorRequest $request)
     {
         // Assign request input to new authorModel object
-        $this->authorModel->email = $request->email;
-        $this->authorModel->username = $request->username;
+        $this->authorModel->email = strtolower($request->email);
+        $this->authorModel->username = strtolower($request->username);
         $this->authorModel->fullname = $request->fullname;
         $this->authorModel->password = bcrypt($request->password);
 
@@ -123,7 +123,7 @@ class AuthorController extends Controller
             'username';
 
         return [
-            $field => $request->email_or_username,
+            $field => strtolower($request->email_or_username),
             'password' => $request->password,
         ];
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Helper\Helper;
 use Exception;
@@ -24,7 +24,7 @@ class Article extends Model
      */
     public function author()
     {
-        return $this->belongsTo('App\Author', 'author_id');
+        return $this->belongsTo('App\Models\Author', 'author_id');
     }
 
     /**
@@ -34,7 +34,7 @@ class Article extends Model
      */
     public function images()
     {
-        return $this->hasMany('App\Image');
+        return $this->hasMany('App\Models\Image');
     }
 
     /**
@@ -44,7 +44,7 @@ class Article extends Model
      */
     public function categories()
     {
-        return $this->belongsToMany('App\Category', 'article_categories', 'article_id', 'category_id')->withTimestamps();
+        return $this->belongsToMany('App\Models\Category', 'article_categories', 'article_id', 'category_id')->withTimestamps();
     }
 
     /**
