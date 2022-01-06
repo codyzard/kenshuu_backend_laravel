@@ -2,21 +2,20 @@
 
 @section('content')
     <div class="wrap-article">
-        <?php if (!empty($_SESSION['messages'])) : ?>
-        <div class="flash flash--success">
-            <?php foreach ($_SESSION['messages'] as $mess) : ?>
-            <p class="message"><?php Helper::print_filtered($mess); ?></p>
-            <?php endforeach ?>
-            <?php unset($_SESSION['messages']); ?>
-        </div>
-        <?php endif ?>
+        @if (Session::has('message'))
+            <div class="flash flash--success">
+                <p class="message">{{ Session::get('message') }}</p>
+            </div>
+        @endif
         <div class="article">
             <div class="article-header">
                 <h3 class="article__title">{{ $article->title }}</h3>
                 <div class="sub-info">
                     <time class="article__time"><img src="{{ asset('assets/image/icon.png') }}"
                             class="clock-icon clock-icon--medium" alt="time-stamp" />{{ $article->created_at }}</time>
-                    <p class="article__author">筆者: <a href="#">{{ $article->author->fullname }}</a></p>
+                    <p class="article__author">筆者: <a
+                            href="{{ route('authors.profile', $article->author->id) }}">{{ $article->author->fullname }}</a>
+                    </p>
                     <p class="article__view">ページビュー: {{ $article->page_view }}</p>
                 </div>
             </div>
@@ -30,9 +29,16 @@
                 <p class="article__content">{{ $article->content }}</p>
             </div>
         </div>
-        <div class="control">
-            <a class="btn btn--warning btn--radius" href="#">変更</a>
-            <a class="btn btn--danger btn--radius" onclick="return confirm('Are you sure?')" href="#">削除</a>
-        </div>
+        @if (Auth::check() && Auth::user()->id == $article->author_id)
+            <div class="control">
+                <a class="btn btn--warning btn--radius" href="{{ route('articles.edit', $article->id) }}">変更</a>
+                <form action="{{ route('articles.delete', $article->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Are you sure?')"><a
+                            class="btn btn--danger btn--radius">削除</a></button>
+                </form>
+            </div>
+        @endif
     </div>
 @endsection

@@ -1,0 +1,79 @@
+/* ---contents---*/
+
+/* <add parent class 'contents' for avoiding conflicting ranking's articles > */
+
+.contents {
+  width: 800px;
+  .top-heading{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a{
+      margin-right: 25px;
+    }
+  }
+  &__title {
+    font-size: 2.4rem;
+  }
+}
+
+.contents .articles {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  &__item {
+    width: 380px;
+    padding: 15px 0;
+    @include flex_horizontal_center;
+    flex-direction: column;
+    border-bottom: 1px solid $line_color;
+  }
+  &__link {
+    @include flex_horizontal_spacebetween;
+    flex-direction: row-reverse;
+    height: 66px;
+    &:hover > .articles__content {
+      color: $btn_color;
+      text-decoration: underline;
+    }
+  }
+  &__cover img {
+    width: 100px;
+    height: 66px;
+  }
+  &__content {
+    font-size: 1.4rem;
+    font-weight: 700;
+    @include articles_content_wrap;
+  }
+  &__stamp {
+    color: $sub_text;
+  }
+  &__time {
+    font-size: 1.2rem;
+  }
+  &__company-release {
+    font-size: 1.3rem;
+    color: $sub_text;
+    &:hover {
+      color: black;
+    }
+  }
+}
+/* end <add parent class 'contents' for avoiding conflicting ranking's articles > */
+
+.control {
+  margin: 20px 0;
+  @include flex_horizontal_center;
+  a {
+    display: inline-block;
+    color: white;
+    font-size: 1.4rem;
+    padding: 12px 20px;
+    font-weight: 700;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+/* ---end contents---*/

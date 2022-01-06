@@ -3,7 +3,7 @@
 namespace App\Helper;
 
 use Exception;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 
 class Helper
@@ -59,10 +59,10 @@ class Helper
             }
             // ファイルデータからSHA-1ハッシュを取ってファイル名を決定し，保存する
             if (!move_uploaded_file(
-                $img,
+                $img->getRealPath(),
                 $path = sprintf(
                     $location . '%s.%s',
-                    $filename = sha1_file($img), //hash & get filename for return and save database
+                    $filename = uniqid() . sha1_file($img), //hash & get filename for return and save database
                     $ext
                 )
             )) {
@@ -91,9 +91,11 @@ class Helper
     public static function remove_image_from_storage($filesName = [], $location)
     {
         try {
-            foreach ($filesName as $fn) {
-                if (file_exists($location . $fn)) { //check file exist before remove
-                    unlink($location . $fn);
+            if (!empty($filesName)) {
+                foreach ($filesName as $fn) {
+                    if (file_exists($location . $fn)) { //check file exist before remove
+                        unlink($location . $fn);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -101,5 +103,11 @@ class Helper
             return false;
         }
         return true;
+    }
+
+    public static function isLogged()
+    {
+        if (Auth::check()) return true;
+        return false;
     }
 }

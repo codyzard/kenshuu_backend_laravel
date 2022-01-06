@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Article;
-use App\Category;
+use App\Models\Article;
+use App\Models\Category;
 
 class HomeController extends Controller
 {
     private $articleModel;
-    public function __construct()
+    public function __construct(Article $article)
     {
-        $this->articleModel = new Article();
+        $this->articleModel = $article;
     }
     public function home()
     {

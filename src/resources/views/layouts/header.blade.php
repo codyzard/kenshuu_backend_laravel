@@ -2,7 +2,7 @@
     <div class="header-container">
         <div class="header-small-container">
             <a class="logo" href="/">
-                <img class="logo__frame" src="{{asset('assets/image/Frame.png')}}" alt="logo" />
+                <img class="logo__frame" src="{{ asset('assets/image/Frame.png') }}" alt="logo" />
                 <h1 class="logo__text">
                     プレスリリース・ニュースリリース配信サービスのPR TIMES
                 </h1>
@@ -14,30 +14,33 @@
                 <li class="release__item release__item--company">
                     <a href="#">配信を依頼</a>
                 </li>
-                <?php if (isset($_SESSION['user'])) : ?>
+                @if (Auth::check())
                     <li class="release__item release__item--logged">
                         <a href="#" class="disabled">管理画面</a>
                         <ul class="profile-manager">
-                            <li class="profile-manager__item"><a class="disabled" href="/author/profile/<?php Helper::print_filtered($_SESSION['user']['id']) ?>">プロフィール</a></li>
-                            <li class="profile-manager__item"><a class="disabled" href="/authentication/logout">ログアウト</a></li>
+                            <li class="profile-manager__item"><a class="disabled"
+                                    href="{{ route('authors.profile', Auth::user()->id) }}">プロフィール</a></li>
+                            <li class="profile-manager__item"><a class="disabled"
+                                    href="{{ route('authors.logout') }}">ログアウト</a></li>
                         </ul>
                     </li>
-                <?php else : ?>
+                @else
                     <li class="release__item release__item--login">
-                        <a href="/authentication/login" class="disabled">ログイン</a>
+                        <a href="{{ route('authors.login') }}" class="disabled">ログイン</a>
                     </li>
-                <?php endif ?>
+                @endif
             </ul>
             <div class="search-box">
                 <input type="text" placeholder="キーワードで検索" class="input--radius" />
                 <button class="btn btn--light-blue input--radius">
-                    <img src="{{asset('assets/image/search.png')}}" alt="search-button" />
+                    <img src="{{ asset('assets/image/search.png') }}" alt="search-button" />
                 </button>
             </div>
         </div>
         <div class="main-header">
             <ul class="services">
-                <li class="
+                <li
+                    class="
                   services__item
                   services__item--active-item
                   services__item--press-release
